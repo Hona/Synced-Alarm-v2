@@ -1,6 +1,6 @@
 ﻿namespace ServerUI
 {
-    partial class MainUI
+    partial class MainUi
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainUi));
             this.lowerPanel = new System.Windows.Forms.Panel();
             this.btnPostClient = new System.Windows.Forms.Button();
             this.btnDeleteSettings = new System.Windows.Forms.Button();
@@ -658,7 +658,7 @@
             this.Controls.Add(this.lowerPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "MainUI";
+            this.Name = "MainUi";
             this.Text = "Alarm Creator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainUI_FormClosing);
             this.lowerPanel.ResumeLayout(false);

@@ -12,3 +12,4 @@ H:\ALL\Projects\Synced Alarm\AlarmLibrary\obj\Debug\AlarmLibrary.csproj.Generate
 H:\ALL\Projects\Synced Alarm\AlarmLibrary\obj\Debug\AlarmLibrary.csproj.CoreCompileInputs.cache
 H:\ALL\Projects\Synced Alarm\AlarmLibrary\obj\Debug\AlarmLibrary.dll
 H:\ALL\Projects\Synced Alarm\AlarmLibrary\obj\Debug\AlarmLibrary.pdb
+H:\ALL\Projects\Synced Alarm\AlarmLibrary\obj\Debug\AlarmLibrary.csprojResolveAssemblyReference.cache

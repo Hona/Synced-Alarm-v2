@@ -1,41 +1,26 @@
-﻿using AlarmLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AlarmLibrary;
 
 namespace ServerUI
 {
     public class Settings
     {
-
         private bool _isDefaultSoundSet;
         private bool _isIntervalSet;
+        private bool _isMessageSet;
         private bool _isStartTimeSet;
         private bool _isStopTimeSet;
-        private bool _isMessageSet;
 
         public Settings() : this(null, null, null, null, null)
         {
         }
 
-        public Settings(DateTime startTime, DateTime stopTime, int minutesInterval) : this(startTime, stopTime,
-            minutesInterval, null, null)
-        {
-        }
-
-        public Settings(DateTime startTime, DateTime stopTime, int minutesInterval, bool setAlarmAtStart) : this(
-            startTime, stopTime, minutesInterval, null, setAlarmAtStart)
-        {
-        }
-
-        public Settings(DateTime startTime, DateTime stopTime, int minutesInterval, Sounds defaultSound) : this(
-            startTime, stopTime, minutesInterval, defaultSound, null)
-        {
-        }
-
-        public Settings(DateTime? startTime, DateTime? stopTime, int? minutesInterval, Sounds? defaultSound,
+        private Settings(DateTime? startTime, DateTime? stopTime, int? minutesInterval, Sounds? defaultSound,
             bool? setAlarmAtStart)
         {
             InitializeLists();
@@ -54,16 +39,16 @@ namespace ServerUI
         public int MinutesInterval { get; private set; }
         public DateTime StartTime { get; private set; }
         public DateTime StopTime { get; private set; }
-        public Sounds DefaultSound { get; private set; }
+        private Sounds DefaultSound { get; set; }
         public List<Alarm> AlarmList { get; set; }
         public bool AlarmAtStartTime { get; private set; }
 
-        private int CurrentIntervalSetID
+        private int CurrentIntervalSetId
         {
-            get { return AlarmList.Count != 0 ? AlarmList.Max(x => x.IntervalSetID + 1) : 1; }
+            get { return AlarmList.Count != 0 ? AlarmList.Max(x => x.IntervalSetId + 1) : 1; }
         }
 
-        public string DefaultTextToSpeechMessage { get; private set; }
+        private string DefaultTextToSpeechMessage { get; set; }
 
         public void SaveSettingsToFile()
         {
@@ -78,11 +63,11 @@ namespace ServerUI
                 fs.Write(toWrite, 0, toWrite.Length);
 
                 toWrite = Encoding.ASCII.GetBytes(
-                    $"#StartTime={StartTime.To24HourDateTimeString() + Environment.NewLine}");
+                    $"#StartTime={StartTime.ToString(Constants.DateTime24HourFormat) + Environment.NewLine}");
                 fs.Write(toWrite, 0, toWrite.Length);
 
                 toWrite = Encoding.ASCII.GetBytes(
-                    $"#StopTime={StopTime.To24HourDateTimeString() + Environment.NewLine}");
+                    $"#StopTime={StopTime.ToString(Constants.DateTime24HourFormat) + Environment.NewLine}");
                 fs.Write(toWrite, 0, toWrite.Length);
 
                 toWrite = Encoding.ASCII.GetBytes($"#DefaultSound={DefaultSound + Environment.NewLine}");
@@ -121,14 +106,14 @@ namespace ServerUI
                     {
                         if (settingString.Contains("#MinutesInterval"))
                             if (settingString.Split('=')[1] != string.Empty)
-                                MinutesInterval = Convert.ToInt32(new string(settingString.Split('=')[1]
+                                MinutesInterval = int.Parse(new string(settingString.Split('=')[1]
                                     .Where(char.IsNumber).ToArray()));
                         if (settingString.Contains("#StartTime"))
                             if (settingString.Split('=')[1] != string.Empty)
-                                StartTime = settingString.Split('=')[1].ToDateTimeFrom24HourString();
+                                StartTime = DateTime.ParseExact(settingString.Split('=')[1],Constants.DateTime24HourFormat,CultureInfo.InvariantCulture);
                         if (settingString.Contains("#StopTime"))
                             if (settingString.Split('=')[1] != string.Empty)
-                                StopTime = settingString.Split('=')[1].ToDateTimeFrom24HourString();
+                                StopTime = DateTime.ParseExact(settingString.Split('=')[1],Constants.DateTime24HourFormat, CultureInfo.InvariantCulture);
                         if (settingString.Contains("#DefaultSound"))
                             if (settingString.Split('=')[1] != string.Empty)
                                 DefaultSound = settingString.Split('=')[1].GetSoundFromString();
@@ -143,7 +128,7 @@ namespace ServerUI
                     }
                     if (settingString[0] != '%') continue;
                     if (!string.IsNullOrEmpty(settingString.Split('%')[1]))
-                        AlarmList.Add(settingString.Split('%')[1].GetAlarmFromString());
+                        AlarmList.Add(Alarm.Parse(settingString.Split('%')[1]));
                 }
         }
 
@@ -151,12 +136,6 @@ namespace ServerUI
         {
             //Creates instance of the alarm list
             AlarmList = new List<Alarm>();
-        }
-
-        public bool IsInitialized()
-        {
-            return _isDefaultSoundSet && _isIntervalSet && _isStartTimeSet && _isStopTimeSet &&
-                   AlarmList.Count != 0;
         }
 
         public void SetAlarmAtStartTime(bool doAlarm)
@@ -191,25 +170,26 @@ namespace ServerUI
         internal void AddIntervalAlarms()
         {
             //Checks whether interval alarms are ready to add, and if so adds them
-            var currentID = CurrentIntervalSetID;
+            var currentId = CurrentIntervalSetId;
             if (AlarmAtStartTime &&
-                FindAlarm(StartTime, DefaultSound, DefaultTextToSpeechMessage, out Alarm _, currentID) ==
+                FindAlarm(StartTime, DefaultSound, DefaultTextToSpeechMessage, out Alarm _, currentId) ==
                 false)
-                AddAlarm(new Alarm(StartTime, true, DefaultSound, DefaultTextToSpeechMessage, currentID));
-            if (_isStartTimeSet && _isStopTimeSet && _isIntervalSet && GetIntervalAlarms(currentID).Count <= 1)
+                AddAlarm(new Alarm(StartTime, true, DefaultSound, DefaultTextToSpeechMessage, currentId));
+            if (_isStartTimeSet && _isStopTimeSet && _isIntervalSet && _isMessageSet && _isDefaultSoundSet &&
+                GetIntervalAlarms(currentId).Count <= 1)
             {
                 var tempTime = StartTime;
                 while (tempTime.AddMinutes(MinutesInterval) <= StopTime)
                 {
                     AddAlarm(new Alarm(tempTime.AddMinutes(MinutesInterval), true, DefaultSound,
-                        DefaultTextToSpeechMessage, currentID));
+                        DefaultTextToSpeechMessage, currentId));
                     tempTime = tempTime.AddMinutes(MinutesInterval);
                 }
             }
             SortAlarms();
         }
 
-        public void SetDefaultTTSMessage(string message)
+        public void SetDefaultMessage(string message)
         {
             _isMessageSet = true;
             DefaultTextToSpeechMessage = message;
@@ -222,22 +202,22 @@ namespace ServerUI
         }
 
         // Potentially refactor the if statement - is it required
-        public bool FindAlarm(DateTime time, Sounds sound, string message, out Alarm outAlarm, int intervalSetID)
+        public bool FindAlarm(DateTime time, Sounds sound, string message, out Alarm outAlarm, int intervalSetId)
         {
             //Finds and alarm with the specified options and sets the outAlarm to it.
             foreach (var alarm in AlarmList)
                 if (alarm.Message != null && message != null)
                 {
-                    if (alarm.AlarmTime.To24HourDateTimeString() != time.To24HourDateTimeString() ||
+                    if (alarm.AlarmTime.ToString(Constants.DateTime24HourFormat) != time.ToString(Constants.DateTime24HourFormat) ||
                         alarm.Sound != sound || alarm.Message != message ||
-                        alarm.IntervalSetID != intervalSetID) continue;
+                        alarm.IntervalSetId != intervalSetId) continue;
                     outAlarm = alarm;
                     return true;
                 }
                 else
                 {
-                    if (alarm.AlarmTime.To24HourDateTimeString() != time.To24HourDateTimeString() ||
-                        alarm.Sound != sound || alarm.IntervalSetID != intervalSetID) continue;
+                    if (alarm.AlarmTime.ToString(Constants.DateTime24HourFormat) != time.ToString(Constants.DateTime24HourFormat) ||
+                        alarm.Sound != sound || alarm.IntervalSetId != intervalSetId) continue;
                     outAlarm = alarm;
                     return true;
                 }
@@ -256,25 +236,11 @@ namespace ServerUI
             AlarmList = AlarmList.OrderBy(alarm => alarm.AlarmTime).ToList();
         }
 
-        public List<Alarm> GetIntervalAlarms(int id)
+        private List<Alarm> GetIntervalAlarms(int id)
         {
             //Returns a list of all alarms that are created as interval alarms
             SortAlarms();
-            return AlarmList.Where(alarm => alarm.PartOfIntervalSet && alarm.IntervalSetID == id).ToList();
-        }
-
-        public List<Alarm> GetSpecificAlarms()
-        {
-            //Returns a list of alarms created specifically
-            SortAlarms();
-            return AlarmList.Where(alarm => !alarm.PartOfIntervalSet && alarm.Sound != Sounds.TextToSpeech).ToList();
-        }
-
-        public List<Alarm> GetTextToSpeechAlarms()
-        {
-            //Returns a list of alarms created as text-to-speech
-            SortAlarms();
-            return AlarmList.Where(alarm => !alarm.PartOfIntervalSet && alarm.Sound == Sounds.TextToSpeech).ToList();
+            return AlarmList.Where(alarm => alarm.PartOfIntervalSet && alarm.IntervalSetId == id).ToList();
         }
     }
 }

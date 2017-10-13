@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using AlarmLibrary;
 
 namespace ServerUI
 {
@@ -14,7 +13,7 @@ namespace ServerUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainUI());
+            Application.Run(new MainUi());
         }
     }
 }

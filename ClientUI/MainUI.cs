@@ -10,11 +10,11 @@ using AlarmLibrary;
 
 namespace ClientUI
 {
-    public partial class MainUI : Form
+    public partial class MainUi : Form
     {
         private List<Alarm> _alarmsList;
 
-        public MainUI()
+        public MainUi()
         {
             InitializeComponent();
             _alarmsList = new List<Alarm>();
@@ -31,7 +31,7 @@ namespace ClientUI
                 foreach (var alarmString in alarmStrings)
                     if (!string.IsNullOrWhiteSpace(alarmString))
                     {
-                        var a = alarmString.GetAlarmFromString();
+                        var a = Alarm.Parse(alarmString);
                         _alarmsList.Add(a);
                     }
             }
@@ -91,7 +91,9 @@ namespace ClientUI
             {
                 var timeUntil = _alarmsList.Find(alarm => alarm.AlarmTriggered == false).AlarmTime - DateTime.Now;
                 lblTimeUntilNextAlarm.Text =
-                    $@"Next alarm in:{Environment.NewLine + timeUntil.Minutes}:{timeUntil.Seconds.ToString().PadLeft(2,'0')}";
+                    $@"Next alarm in:{Environment.NewLine + timeUntil.Minutes}:{
+                            timeUntil.Seconds.ToString().PadLeft(2, '0')
+                        }";
             }
             catch (Exception)
             {

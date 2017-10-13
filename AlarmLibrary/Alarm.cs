@@ -1,32 +1,18 @@
 ﻿using System;
+using System.Globalization;
 
 namespace AlarmLibrary
 {
     public class Alarm
     {
-        public Alarm(DateTime alarmTime, bool partOfSet, bool enabled, string message, Sounds sound)
+        private Alarm(DateTime alarmTime, bool partOfSet, bool enabled, string message, Sounds sound, int intervalSetId)
         {
             AlarmTime = alarmTime;
             PartOfIntervalSet = partOfSet;
             Enabled = enabled;
             Message = message;
             Sound = sound;
-        }
-        public Alarm(DateTime alarmTime, bool partOfSet, bool enabled, string message, Sounds sound, int intervalSetId)
-        {
-            AlarmTime = alarmTime;
-            PartOfIntervalSet = partOfSet;
-            Enabled = enabled;
-            Message = message;
-            Sound = sound;
-            IntervalSetID = intervalSetId;
-        }
-
-        public Alarm(DateTime alarmTime, bool partOfSet, Sounds sound)
-        {
-            AlarmTime = alarmTime;
-            PartOfIntervalSet = partOfSet;
-            Sound = sound;
+            IntervalSetId = intervalSetId;
         }
 
         public Alarm(DateTime alarmTime, bool partOfSet, Sounds sound, string message)
@@ -37,13 +23,13 @@ namespace AlarmLibrary
             Sound = sound;
         }
 
-        public Alarm(DateTime alarmTime, bool partOfSet, Sounds sound, string message,int intervalSetID)
+        public Alarm(DateTime alarmTime, bool partOfSet, Sounds sound, string message, int intervalSetId)
         {
             AlarmTime = alarmTime;
             PartOfIntervalSet = partOfSet;
             Message = message;
             Sound = sound;
-            IntervalSetID = intervalSetID;
+            IntervalSetId = intervalSetId;
         }
 
 
@@ -57,9 +43,9 @@ namespace AlarmLibrary
         public DateTime AlarmTime { get; set; }
         public string Message { get; set; }
         public Sounds Sound { get; set; }
-        public bool PartOfIntervalSet { get; set; }
+        public bool PartOfIntervalSet { get; }
         public bool AlarmTriggered { get; set; }
-        public int IntervalSetID { get; set; }
+        public int IntervalSetId { get; }
 
         public string GetSoundString()
         {
@@ -80,7 +66,21 @@ namespace AlarmLibrary
 
         public override string ToString()
         {
-            return $"{Enabled},{AlarmTime.To24HourDateTimeString()},{Message},{Sound},{PartOfIntervalSet},{IntervalSetID}";
+            return
+                $"{Enabled},{AlarmTime.ToString(Constants.DateTime24HourFormat)},{Message},{Sound},{PartOfIntervalSet},{IntervalSetId}";
+        }
+
+        public static Alarm Parse(string fromString)
+        {
+            //Format: Enabled,AlarmTime,Message,Sound,PartOfIntervalSet
+            //AlarmMode,AlarmTime,PartOfIntervalSet
+            var stringArray = fromString.Split(',');
+            return new Alarm(DateTime.ParseExact(stringArray[1],Constants.DateTime24HourFormat,CultureInfo.InvariantCulture),
+                Convert.ToBoolean(stringArray[4]),
+                Convert.ToBoolean(stringArray[0]),
+                stringArray[2],
+                stringArray[3].GetSoundFromString(),
+                int.Parse(stringArray[5]));
         }
     }
 }

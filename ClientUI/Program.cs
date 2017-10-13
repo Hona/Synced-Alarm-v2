@@ -13,7 +13,7 @@ namespace ClientUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainUI());
+            Application.Run(new MainUi());
         }
     }
 }

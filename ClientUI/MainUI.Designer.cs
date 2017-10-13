@@ -1,6 +1,6 @@
 ﻿namespace ClientUI
 {
-    partial class MainUI
+    partial class MainUi
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainUi));
             this.MainPanel = new System.Windows.Forms.Panel();
             this.lblTimeUntilNextAlarm = new System.Windows.Forms.Label();
             this.lblAlarmList = new System.Windows.Forms.Label();
@@ -127,7 +127,7 @@
             this.Controls.Add(this.MainPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(790, 161);
-            this.Name = "MainUI";
+            this.Name = "MainUi";
             this.Text = "Synced Alarm";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainUI_KeyDown);
             this.MainPanel.ResumeLayout(false);

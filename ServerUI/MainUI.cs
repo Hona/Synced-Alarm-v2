@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,15 +10,15 @@ using AlarmLibrary;
 
 namespace ServerUI
 {
-    public partial class MainUI : Form
+    public partial class MainUi : Form
     {
         private readonly bool _settingsSaveable;
-        private Settings _settings;
 
         private Thread _intervalSoundThread;
+        private Settings _settings;
         private Thread _specificSoundThread;
 
-        public MainUI()
+        public MainUi()
         {
             //Initializes variables
             InitializeComponent();
@@ -139,8 +140,8 @@ namespace ServerUI
             _settings.SetDefaultSound((Sounds) cbIntervalSound.SelectedItem);
             _settings.SetStartTime(dtpStartTime.Value);
             _settings.SetStopTime(dtpStopTime.Value);
-            _settings.SetDefaultTTSMessage(txtIntervalTTSMessage.Text);
-            _settings.SetMinutesInterval(Convert.ToInt32(nudAlarmInterval.Value));
+            _settings.SetDefaultMessage(txtIntervalTTSMessage.Text);
+            _settings.SetMinutesInterval(int.Parse(nudAlarmInterval.Value.ToString(CultureInfo.InvariantCulture)));
             _settings.AddIntervalAlarms();
             if (_settings.AlarmList.Count != 0)
                 btnPostClient.Enabled = true;
@@ -159,7 +160,6 @@ namespace ServerUI
             lvAlarmsList.Items.Clear();
 
 
-            
             if (tabSettings.SelectedIndex == 2)
             {
                 _settings.SortAlarms();
@@ -167,7 +167,7 @@ namespace ServerUI
                     .Where(g => g.Count() > 1)
                     .Select(y => y).ToList();
                 if (timeClashes.Count != 0)
-                    MessageBox.Show(timeClashes.Count + " alarm time clashes!");
+                    MessageBox.Show(timeClashes.Count + @" alarm time clashes!");
             }
 
             //Iterates through alarms
@@ -177,8 +177,8 @@ namespace ServerUI
                 var lvItem = new ListViewItem(new[]
                 {
                     //Collumn string values
-                    alarm.AlarmTime.To24HourDateTimeString(), alarm.GetSoundString(),
-                    alarm.Message, alarm.IntervalSetID.ToString()
+                    alarm.AlarmTime.ToString(Constants.DateTime24HourFormat), alarm.GetSoundString(),
+                    alarm.Message, alarm.IntervalSetId.ToString()
                 })
                 {
                     //ListViewItem changes
@@ -208,7 +208,7 @@ namespace ServerUI
         private void lvAlarmsList_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             //Finds the alarm selected from the listview and sets the enabled boolean to the checkbox value
-            if (_settings.FindAlarm(lvAlarmsList.Items[e.Index].SubItems[0].Text.ToDateTimeFrom24HourString(),
+            if (_settings.FindAlarm(DateTime.ParseExact(lvAlarmsList.Items[e.Index].SubItems[0].Text,Constants.DateTime24HourFormat,CultureInfo.InvariantCulture),
                 lvAlarmsList.Items[e.Index].SubItems[1].Text.GetSoundFromString(),
                 lvAlarmsList.Items[e.Index].SubItems[2].Text, out Alarm selectedAlarm))
                 selectedAlarm.Enabled = e.NewValue == CheckState.Checked;
@@ -242,16 +242,12 @@ namespace ServerUI
         {
             _intervalSoundThread = new Thread(SoundsHelper.SoundAlarm);
             if ((Sounds) cbIntervalSound.SelectedItem == Sounds.TextToSpeech)
-            {
                 if (txtIntervalTTSMessage.Text != string.Empty)
-                {
                     _intervalSoundThread.Start(new Alarm(DateTime.Now, false, Sounds.TextToSpeech,
                         txtIntervalTTSMessage.Text));
-                }
                 else
                     _intervalSoundThread.Start(new Alarm(DateTime.Now, false, Sounds.TextToSpeech,
                         "This is an example of speech synthesis"));
-            }
             else
                 _intervalSoundThread.Start((Sounds) cbIntervalSound.SelectedItem);
         }
@@ -260,16 +256,12 @@ namespace ServerUI
         {
             _specificSoundThread = new Thread(SoundsHelper.SoundAlarm);
             if ((Sounds) cbSpecificSound.SelectedItem == Sounds.TextToSpeech)
-            {
                 if (txtSpecificMessage.Text != string.Empty)
-                {
                     _specificSoundThread.Start(new Alarm(DateTime.Now, false, Sounds.TextToSpeech,
                         txtSpecificMessage.Text));
-                }
                 else
                     _specificSoundThread.Start(new Alarm(DateTime.Now, false, Sounds.TextToSpeech,
                         "This is an example of speech synthesis"));
-            }
             else
                 _specificSoundThread.Start((Sounds) cbSpecificSound.SelectedItem);
         }
@@ -301,11 +293,11 @@ namespace ServerUI
 
         private void btnEditAlarm_Click(object sender, EventArgs e)
         {
-            _settings.FindAlarm(lvAlarmsList.SelectedItems[0].SubItems[0].Text.ToDateTimeFrom24HourString(),
+            _settings.FindAlarm(DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text, Constants.DateTime24HourFormat, CultureInfo.InvariantCulture),
                 lvAlarmsList.SelectedItems[0].SubItems[1].Text.GetSoundFromString(),
                 lvAlarmsList.SelectedItems[0].SubItems[2].Text, out Alarm selectedAlarm,
-                Convert.ToInt32(lvAlarmsList.SelectedItems[0].SubItems[3].Text));
-            EditAlarmForm editAlarmForm = new EditAlarmForm(selectedAlarm, this);
+                int.Parse(lvAlarmsList.SelectedItems[0].SubItems[3].Text));
+            var editAlarmForm = new EditAlarmForm(selectedAlarm, this);
             editAlarmForm.Show();
         }
 
@@ -335,10 +327,10 @@ namespace ServerUI
         private void btnDeleteAlarm_Click(object sender, EventArgs e)
         {
             var oldIndex = lvAlarmsList.SelectedItems[0].Index;
-            _settings.FindAlarm(lvAlarmsList.SelectedItems[0].SubItems[0].Text.ToDateTimeFrom24HourString(),
+            _settings.FindAlarm(DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text,Constants.DateTime24HourFormat,CultureInfo.InvariantCulture),
                 lvAlarmsList.SelectedItems[0].SubItems[1].Text.GetSoundFromString(),
                 lvAlarmsList.SelectedItems[0].SubItems[2].Text, out Alarm selectedAlarm,
-                Convert.ToInt32(lvAlarmsList.SelectedItems[0].SubItems[3].Text));
+                int.Parse(lvAlarmsList.SelectedItems[0].SubItems[3].Text));
             _settings.AlarmList.Remove(selectedAlarm);
             tabSettings_Click(null, null);
             if (lvAlarmsList.Items.Count >= oldIndex)
@@ -349,10 +341,10 @@ namespace ServerUI
         private void btnDeleteIntervalSet_Click(object sender, EventArgs e)
         {
             var oldIndex = lvAlarmsList.SelectedItems[0].Index;
-            var idToDelete = Convert.ToInt32(lvAlarmsList.SelectedItems[0].SubItems[3].Text);
-            var newAlarmList = _settings.AlarmList.Where(x => x.IntervalSetID != idToDelete).ToList();
+            var idToDelete = int.Parse(lvAlarmsList.SelectedItems[0].SubItems[3].Text);
+            var newAlarmList = _settings.AlarmList.Where(x => x.IntervalSetId != idToDelete).ToList();
             _settings.AlarmList = newAlarmList;
-            tabSettings_Click(null,null);
+            tabSettings_Click(null, null);
             if (lvAlarmsList.Items.Count >= oldIndex)
                 lvAlarmsList.Items[oldIndex].Selected = true;
             lvAlarmsList.Select();

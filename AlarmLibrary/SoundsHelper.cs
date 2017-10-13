@@ -7,18 +7,25 @@ namespace AlarmLibrary
 {
     public static class SoundsHelper
     {
-        public static SoundPlayer SoundPlayer;
+        private static SoundPlayer _soundPlayer;
 
         public static Sounds GetSoundFromString(this string soundText)
         {
-            if (soundText == "Analog Watch" || soundText == "AnalogWatch")
-                return Sounds.AnalogWatch;
-            if (soundText == "Annoying Alarm" || soundText == "AnnoyingAlarm")
-                return Sounds.AnnoyingAlarm;
-            if (soundText == "School Bell" || soundText == "SchoolBell")
-                return Sounds.SchoolBell;
-            if (soundText == "Text-to-Speech" || soundText == "TextToSpeech")
-                return Sounds.TextToSpeech;
+            switch (soundText)
+            {
+                case "Analog Watch":
+                case "AnalogWatch":
+                    return Sounds.AnalogWatch;
+                case "Annoying Alarm":
+                case "AnnoyingAlarm":
+                    return Sounds.AnnoyingAlarm;
+                case "School Bell":
+                case "SchoolBell":
+                    return Sounds.SchoolBell;
+                case "Text-to-Speech":
+                case "TextToSpeech":
+                    return Sounds.TextToSpeech;
+            }
 
             return Sounds.SchoolBell;
         }
@@ -35,16 +42,16 @@ namespace AlarmLibrary
             switch (soundSwitcher)
             {
                 case Sounds.AnalogWatch:
-                    SoundPlayer = new SoundPlayer(Resources.RoyaltyFreeAnalogWatch);
-                    SoundPlayer.Play();
+                    _soundPlayer = new SoundPlayer(Resources.RoyaltyFreeAnalogWatch);
+                    _soundPlayer.Play();
                     break;
                 case Sounds.AnnoyingAlarm:
-                    SoundPlayer = new SoundPlayer(Resources.RoyaltyFreeAlarmClock);
-                    SoundPlayer.Play();
+                    _soundPlayer = new SoundPlayer(Resources.RoyaltyFreeAlarmClock);
+                    _soundPlayer.Play();
                     break;
                 case Sounds.SchoolBell:
-                    SoundPlayer = new SoundPlayer(Resources.RoyaltyFreeSchoolBell);
-                    SoundPlayer.Play();
+                    _soundPlayer = new SoundPlayer(Resources.RoyaltyFreeSchoolBell);
+                    _soundPlayer.Play();
                     break;
                 case Sounds.TextToSpeech:
                     var ss = new SpeechSynthesizer();
