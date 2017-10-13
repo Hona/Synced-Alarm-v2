@@ -1,0 +1,22 @@
+#MinutesInterval=4
+#StartTime=10/13/2017 18:01
+#StopTime=10/13/2017 19:01
+#DefaultSound=AnalogWatch
+//Format: Enabled,AlarmTime,Message,Sound,PartOfIntervalSet,IntervalSetID
+%True,10/13/2017 18:05,,AnalogWatch,True,3
+%True,10/13/2017 18:09,,AnalogWatch,True,3
+%True,10/13/2017 18:13,,AnalogWatch,True,3
+%True,10/13/2017 18:17,,AnalogWatch,True,3
+%True,10/13/2017 18:21,,AnalogWatch,True,3
+%True,10/13/2017 18:27,,AnalogWatch,True,2
+%True,10/13/2017 18:37,,AnalogWatch,True,3
+%True,10/13/2017 18:40,,AnalogWatch,True,2
+%True,10/13/2017 18:45,,AnalogWatch,True,3
+%True,10/13/2017 18:49,,AnalogWatch,True,3
+%True,10/13/2017 18:53,,AnalogWatch,True,2
+%True,10/13/2017 18:53,,AnalogWatch,True,3
+%True,10/13/2017 18:56,,AnalogWatch,True,1
+%True,10/13/2017 18:57,,AnalogWatch,True,3
+%True,10/13/2017 19:01,,AnalogWatch,True,3
+#AlarmAtStartTime=False
+#DefaultTextToSpeechMessage=
