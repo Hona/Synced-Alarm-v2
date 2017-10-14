@@ -13,7 +13,6 @@ namespace ServerUI
     public partial class MainUi : Form
     {
         private readonly bool _settingsSaveable;
-
         private Thread _intervalSoundThread;
         private Settings _settings;
         private Thread _specificSoundThread;
@@ -27,7 +26,6 @@ namespace ServerUI
             //Disables tabs and controls
             btnPostClient.Enabled = false;
             btnAddIntervalTimes.Enabled = false;
-            btnAddSpecificAlarm.Enabled = false;
             btnEditAlarm.Enabled = false;
             btnDeleteAlarm.Enabled = false;
             btnDeleteIntervalSet.Enabled = false;
@@ -45,12 +43,13 @@ namespace ServerUI
             //Tries to load settings from the file
             try
             {
-                if (File.Exists(Environment.CurrentDirectory + "\\settings.txt"))
-                    _settings.LoadSettingsFromFile();
+                if (File.Exists(Environment.CurrentDirectory + "\\settings.json"))
+                    _settings = Settings.JsonDeserialize();
                 _settingsSaveable = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                MessageBox.Show(e.Message);
                 _settingsSaveable = false;
                 var result =
                     MessageBox.Show(
@@ -64,8 +63,8 @@ namespace ServerUI
                         Close();
                         break;
                     case DialogResult.Yes:
-                        File.Copy(Environment.CurrentDirectory + "\\settings.txt",
-                            Environment.CurrentDirectory + "\\settings.txt.backup", true);
+                        File.Copy(Environment.CurrentDirectory + "\\settings.json",
+                            Environment.CurrentDirectory + "\\settings.json.backup", true);
                         _settings = new Settings();
                         break;
                     case DialogResult.No:
@@ -208,7 +207,9 @@ namespace ServerUI
         private void lvAlarmsList_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             //Finds the alarm selected from the listview and sets the enabled boolean to the checkbox value
-            if (_settings.FindAlarm(DateTime.ParseExact(lvAlarmsList.Items[e.Index].SubItems[0].Text,Constants.DateTime24HourFormat,CultureInfo.InvariantCulture),
+            if (_settings.FindAlarm(
+                DateTime.ParseExact(lvAlarmsList.Items[e.Index].SubItems[0].Text, Constants.DateTime24HourFormat,
+                    CultureInfo.InvariantCulture),
                 lvAlarmsList.Items[e.Index].SubItems[1].Text.GetSoundFromString(),
                 lvAlarmsList.Items[e.Index].SubItems[2].Text, out Alarm selectedAlarm))
                 selectedAlarm.Enabled = e.NewValue == CheckState.Checked;
@@ -218,7 +219,7 @@ namespace ServerUI
         {
             //Checks if the settings are fine to be saved, then saves them to a file
             if (_settingsSaveable)
-                _settings.SaveSettingsToFile();
+                _settings.JsonSerialize();
         }
 
         private void btnAddSpecificAlarm_Click(object sender, EventArgs e)
@@ -293,7 +294,9 @@ namespace ServerUI
 
         private void btnEditAlarm_Click(object sender, EventArgs e)
         {
-            _settings.FindAlarm(DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text, Constants.DateTime24HourFormat, CultureInfo.InvariantCulture),
+            _settings.FindAlarm(
+                DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text, Constants.DateTime24HourFormat,
+                    CultureInfo.InvariantCulture),
                 lvAlarmsList.SelectedItems[0].SubItems[1].Text.GetSoundFromString(),
                 lvAlarmsList.SelectedItems[0].SubItems[2].Text, out Alarm selectedAlarm,
                 int.Parse(lvAlarmsList.SelectedItems[0].SubItems[3].Text));
@@ -327,7 +330,9 @@ namespace ServerUI
         private void btnDeleteAlarm_Click(object sender, EventArgs e)
         {
             var oldIndex = lvAlarmsList.SelectedItems[0].Index;
-            _settings.FindAlarm(DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text,Constants.DateTime24HourFormat,CultureInfo.InvariantCulture),
+            _settings.FindAlarm(
+                DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text, Constants.DateTime24HourFormat,
+                    CultureInfo.InvariantCulture),
                 lvAlarmsList.SelectedItems[0].SubItems[1].Text.GetSoundFromString(),
                 lvAlarmsList.SelectedItems[0].SubItems[2].Text, out Alarm selectedAlarm,
                 int.Parse(lvAlarmsList.SelectedItems[0].SubItems[3].Text));
@@ -348,6 +353,14 @@ namespace ServerUI
             if (lvAlarmsList.Items.Count >= oldIndex)
                 lvAlarmsList.Items[oldIndex].Selected = true;
             lvAlarmsList.Select();
+        }
+
+        private void txtSpecificMessage_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void dtpSpecificAlarm_ValueChanged(object sender, EventArgs e)
+        {
         }
     }
 }

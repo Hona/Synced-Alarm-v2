@@ -5,6 +5,10 @@ namespace AlarmLibrary
 {
     public class Alarm
     {
+        public Alarm()
+        {
+        }
+
         private Alarm(DateTime alarmTime, bool partOfSet, bool enabled, string message, Sounds sound, int intervalSetId)
         {
             AlarmTime = alarmTime;
@@ -45,7 +49,7 @@ namespace AlarmLibrary
         public Sounds Sound { get; set; }
         public bool PartOfIntervalSet { get; }
         public bool AlarmTriggered { get; set; }
-        public int IntervalSetId { get; }
+        public int IntervalSetId { get; set; }
 
         public string GetSoundString()
         {
@@ -75,7 +79,8 @@ namespace AlarmLibrary
             //Format: Enabled,AlarmTime,Message,Sound,PartOfIntervalSet
             //AlarmMode,AlarmTime,PartOfIntervalSet
             var stringArray = fromString.Split(',');
-            return new Alarm(DateTime.ParseExact(stringArray[1],Constants.DateTime24HourFormat,CultureInfo.InvariantCulture),
+            return new Alarm(
+                DateTime.ParseExact(stringArray[1], Constants.DateTime24HourFormat, CultureInfo.InvariantCulture),
                 Convert.ToBoolean(stringArray[4]),
                 Convert.ToBoolean(stringArray[0]),
                 stringArray[2],

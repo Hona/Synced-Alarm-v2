@@ -67,6 +67,8 @@
             this.chMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chIntervalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ButtonsPanel = new System.Windows.Forms.Panel();
+            this.btnDeleteIntervalSet = new System.Windows.Forms.Button();
+            this.btnDeleteAlarm = new System.Windows.Forms.Button();
             this.btnEditAlarm = new System.Windows.Forms.Button();
             this.CreditsTab = new System.Windows.Forms.TabPage();
             this.alarmLabel = new System.Windows.Forms.LinkLabel();
@@ -77,8 +79,6 @@
             this.alarmBellLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.chTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnDeleteAlarm = new System.Windows.Forms.Button();
-            this.btnDeleteIntervalSet = new System.Windows.Forms.Button();
             this.lowerPanel.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.tabSettings.SuspendLayout();
@@ -415,6 +415,7 @@
             this.txtSpecificMessage.Name = "txtSpecificMessage";
             this.txtSpecificMessage.Size = new System.Drawing.Size(206, 41);
             this.txtSpecificMessage.TabIndex = 39;
+            this.txtSpecificMessage.TextChanged += new System.EventHandler(this.txtSpecificMessage_TextChanged);
             // 
             // label3
             // 
@@ -446,6 +447,7 @@
             this.dtpSpecificAlarm.Name = "dtpSpecificAlarm";
             this.dtpSpecificAlarm.Size = new System.Drawing.Size(119, 20);
             this.dtpSpecificAlarm.TabIndex = 34;
+            this.dtpSpecificAlarm.ValueChanged += new System.EventHandler(this.dtpSpecificAlarm_ValueChanged);
             // 
             // label2
             // 
@@ -518,6 +520,34 @@
             this.ButtonsPanel.Name = "ButtonsPanel";
             this.ButtonsPanel.Size = new System.Drawing.Size(576, 34);
             this.ButtonsPanel.TabIndex = 1;
+            // 
+            // btnDeleteIntervalSet
+            // 
+            this.btnDeleteIntervalSet.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnDeleteIntervalSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDeleteIntervalSet.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnDeleteIntervalSet.Location = new System.Drawing.Point(0, 0);
+            this.btnDeleteIntervalSet.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+            this.btnDeleteIntervalSet.Name = "btnDeleteIntervalSet";
+            this.btnDeleteIntervalSet.Size = new System.Drawing.Size(192, 34);
+            this.btnDeleteIntervalSet.TabIndex = 4;
+            this.btnDeleteIntervalSet.Text = "Delete Alarm Set";
+            this.btnDeleteIntervalSet.UseVisualStyleBackColor = true;
+            this.btnDeleteIntervalSet.Click += new System.EventHandler(this.btnDeleteIntervalSet_Click);
+            // 
+            // btnDeleteAlarm
+            // 
+            this.btnDeleteAlarm.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnDeleteAlarm.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDeleteAlarm.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.btnDeleteAlarm.Location = new System.Drawing.Point(192, 0);
+            this.btnDeleteAlarm.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+            this.btnDeleteAlarm.Name = "btnDeleteAlarm";
+            this.btnDeleteAlarm.Size = new System.Drawing.Size(192, 34);
+            this.btnDeleteAlarm.TabIndex = 3;
+            this.btnDeleteAlarm.Text = "Delete Alarm";
+            this.btnDeleteAlarm.UseVisualStyleBackColor = true;
+            this.btnDeleteAlarm.Click += new System.EventHandler(this.btnDeleteAlarm_Click);
             // 
             // btnEditAlarm
             // 
@@ -621,35 +651,7 @@
             // 
             this.chTime.Text = "";
             // 
-            // btnDeleteAlarm
-            // 
-            this.btnDeleteAlarm.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnDeleteAlarm.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDeleteAlarm.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnDeleteAlarm.Location = new System.Drawing.Point(192, 0);
-            this.btnDeleteAlarm.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
-            this.btnDeleteAlarm.Name = "btnDeleteAlarm";
-            this.btnDeleteAlarm.Size = new System.Drawing.Size(192, 34);
-            this.btnDeleteAlarm.TabIndex = 3;
-            this.btnDeleteAlarm.Text = "Delete Alarm";
-            this.btnDeleteAlarm.UseVisualStyleBackColor = true;
-            this.btnDeleteAlarm.Click += new System.EventHandler(this.btnDeleteAlarm_Click);
-            // 
-            // btnDeleteIntervalSet
-            // 
-            this.btnDeleteIntervalSet.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnDeleteIntervalSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDeleteIntervalSet.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnDeleteIntervalSet.Location = new System.Drawing.Point(0, 0);
-            this.btnDeleteIntervalSet.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
-            this.btnDeleteIntervalSet.Name = "btnDeleteIntervalSet";
-            this.btnDeleteIntervalSet.Size = new System.Drawing.Size(192, 34);
-            this.btnDeleteIntervalSet.TabIndex = 4;
-            this.btnDeleteIntervalSet.Text = "Delete Alarm Set";
-            this.btnDeleteIntervalSet.UseVisualStyleBackColor = true;
-            this.btnDeleteIntervalSet.Click += new System.EventHandler(this.btnDeleteIntervalSet_Click);
-            // 
-            // MainUI
+            // MainUi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
