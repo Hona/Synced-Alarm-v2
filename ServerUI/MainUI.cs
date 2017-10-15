@@ -207,7 +207,7 @@ namespace ServerUI
         private void lvAlarmsList_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             //Finds the alarm selected from the listview and sets the enabled boolean to the checkbox value
-            if (_settings.FindAlarm(
+            if (_settings.TryFindAlarm(
                 DateTime.ParseExact(lvAlarmsList.Items[e.Index].SubItems[0].Text, Constants.DateTime24HourFormat,
                     CultureInfo.InvariantCulture),
                 lvAlarmsList.Items[e.Index].SubItems[1].Text.GetSoundFromString(),
@@ -294,7 +294,7 @@ namespace ServerUI
 
         private void btnEditAlarm_Click(object sender, EventArgs e)
         {
-            _settings.FindAlarm(
+            _settings.TryFindAlarm(
                 DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text, Constants.DateTime24HourFormat,
                     CultureInfo.InvariantCulture),
                 lvAlarmsList.SelectedItems[0].SubItems[1].Text.GetSoundFromString(),
@@ -330,7 +330,7 @@ namespace ServerUI
         private void btnDeleteAlarm_Click(object sender, EventArgs e)
         {
             var oldIndex = lvAlarmsList.SelectedItems[0].Index;
-            _settings.FindAlarm(
+            _settings.TryFindAlarm(
                 DateTime.ParseExact(lvAlarmsList.SelectedItems[0].SubItems[0].Text, Constants.DateTime24HourFormat,
                     CultureInfo.InvariantCulture),
                 lvAlarmsList.SelectedItems[0].SubItems[1].Text.GetSoundFromString(),

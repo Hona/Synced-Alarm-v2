@@ -1,46 +1,45 @@
 ﻿using System;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace AlarmLibrary
 {
     public class Alarm
     {
-        public Alarm()
-        {
-        }
-
-        private Alarm(DateTime alarmTime, bool partOfSet, bool enabled, string message, Sounds sound, int intervalSetId)
+        [JsonConstructor]
+        private Alarm(DateTime alarmTime, bool partOfIntervalSet, bool enabled, string message, Sounds sound,
+            int intervalSetId)
         {
             AlarmTime = alarmTime;
-            PartOfIntervalSet = partOfSet;
+            PartOfIntervalSet = partOfIntervalSet;
             Enabled = enabled;
             Message = message;
             Sound = sound;
             IntervalSetId = intervalSetId;
         }
 
-        public Alarm(DateTime alarmTime, bool partOfSet, Sounds sound, string message)
+        public Alarm(DateTime alarmTime, bool partOfIntervalSet, Sounds sound, string message)
         {
             AlarmTime = alarmTime;
-            PartOfIntervalSet = partOfSet;
+            PartOfIntervalSet = partOfIntervalSet;
             Message = message;
             Sound = sound;
         }
 
-        public Alarm(DateTime alarmTime, bool partOfSet, Sounds sound, string message, int intervalSetId)
+        public Alarm(DateTime alarmTime, bool partOfIntervalSet, Sounds sound, string message, int intervalSetId)
         {
             AlarmTime = alarmTime;
-            PartOfIntervalSet = partOfSet;
+            PartOfIntervalSet = partOfIntervalSet;
             Message = message;
             Sound = sound;
             IntervalSetId = intervalSetId;
         }
 
 
-        public Alarm(DateTime alarmTime, bool partOfSet)
+        public Alarm(DateTime alarmTime, bool partOfIntervalSet)
         {
             AlarmTime = alarmTime;
-            PartOfIntervalSet = partOfSet;
+            PartOfIntervalSet = partOfIntervalSet;
         }
 
         public bool Enabled { get; set; } = true;
@@ -48,7 +47,10 @@ namespace AlarmLibrary
         public string Message { get; set; }
         public Sounds Sound { get; set; }
         public bool PartOfIntervalSet { get; }
+
         public bool AlarmTriggered { get; set; }
+
+        // If set is private/get only deserializing will throw a runtime error
         public int IntervalSetId { get; set; }
 
         public string GetSoundString()

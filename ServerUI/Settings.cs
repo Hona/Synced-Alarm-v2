@@ -9,7 +9,6 @@ namespace ServerUI
 {
     public class Settings
     {
-        // TODO: Remove all traces of other settings saving
         private bool _isDefaultSoundSet;
 
         private bool _isIntervalSet;
@@ -20,6 +19,19 @@ namespace ServerUI
         public Settings()
         {
             AlarmList = new List<Alarm>();
+        }
+
+        [JsonConstructor]
+        public Settings(int minutesInterval, DateTime startTime, DateTime stopTime, Sounds defaultSound,
+            List<Alarm> alarmList, bool alarmAtStartTime, string defaultTextToSpeechMessage)
+        {
+            MinutesInterval = minutesInterval;
+            StartTime = startTime;
+            StopTime = stopTime;
+            DefaultSound = defaultSound;
+            AlarmList = alarmList;
+            AlarmAtStartTime = alarmAtStartTime;
+            DefaultTextToSpeechMessage = defaultTextToSpeechMessage;
         }
 
         public int MinutesInterval { get; private set; }
@@ -86,7 +98,7 @@ namespace ServerUI
             //Checks whether interval alarms are ready to add, and if so adds them
             var currentId = CurrentIntervalSetId;
             if (AlarmAtStartTime &&
-                FindAlarm(StartTime, DefaultSound, DefaultTextToSpeechMessage, out Alarm _, currentId) ==
+                TryFindAlarm(StartTime, DefaultSound, DefaultTextToSpeechMessage, out Alarm _, currentId) ==
                 false)
                 AddAlarm(new Alarm(StartTime, true, DefaultSound, DefaultTextToSpeechMessage, currentId));
             if (_isStartTimeSet && _isStopTimeSet && _isIntervalSet && _isMessageSet && _isDefaultSoundSet &&
@@ -109,14 +121,12 @@ namespace ServerUI
             DefaultTextToSpeechMessage = message;
         }
 
-        public bool FindAlarm(DateTime time, Sounds sound, string message, out Alarm outAlarm)
+        public bool TryFindAlarm(DateTime time, Sounds sound, string message, out Alarm outAlarm)
         {
-            FindAlarm(time, sound, message, out outAlarm, 0);
-            return false;
+            return TryFindAlarm(time, sound, message, out outAlarm, 0);
         }
 
-        // Potentially refactor the if statement - is it required
-        public bool FindAlarm(DateTime time, Sounds sound, string message, out Alarm outAlarm, int intervalSetId)
+        public bool TryFindAlarm(DateTime time, Sounds sound, string message, out Alarm outAlarm, int intervalSetId)
         {
             //Finds and alarm with the specified options and sets the outAlarm to it.
             foreach (var alarm in AlarmList)
@@ -126,14 +136,6 @@ namespace ServerUI
                         time.ToString(Constants.DateTime24HourFormat) ||
                         alarm.Sound != sound || alarm.Message != message ||
                         alarm.IntervalSetId != intervalSetId) continue;
-                    outAlarm = alarm;
-                    return true;
-                }
-                else
-                {
-                    if (alarm.AlarmTime.ToString(Constants.DateTime24HourFormat) !=
-                        time.ToString(Constants.DateTime24HourFormat) ||
-                        alarm.Sound != sound || alarm.IntervalSetId != intervalSetId) continue;
                     outAlarm = alarm;
                     return true;
                 }
